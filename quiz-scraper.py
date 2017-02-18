@@ -2,20 +2,20 @@ import scrapy
 
 from scrapy.crawler import CrawlerProcess
 
-def print_questions(questions, answers=None):
+def get_question_pages(questions, answers=None):
+    pages = []
     for i, q in enumerate(questions):
         if i >= 8:
-            print('# {}: what links?\n\n'.format(i + 1))
+            page = '# {}: what links?\n\n'.format(i + 1)
             q = q.rstrip('?')
-            q = '\n'.join(['- {}'.format(opt) for opt in q.split('; ')])
+            page = page + '\n'.join(['- {}'.format(opt) for opt in q.split('; ')])
+            pages.append(page)
         else:
-            print('# {}\n'.format(i + 1))
-
-        print('{}\n\n---\n'.format(q))
+            pages.append('# {}\n\n{}'.format(i + 1, q))
 
         if answers:
-            answer = answers[i]
-            print('{}\n\n---\n'.format(answer))
+            pages.append(answers[i])
+    return pages
 
 class QuizScraper(scrapy.Spider):
     """A scraper for fetching the Guardian weekend quiz"""
@@ -26,20 +26,21 @@ class QuizScraper(scrapy.Spider):
 
     def parse(self, response):
         quiz_containers = response.css('section.fc-container')
-        href = quiz_containers[0].css('div.fc-item__container a ::attr(href)').extract_first()
-        if href:
-            yield scrapy.Request(href, callback=self.parse_quiz)
+        latest_quiz_url = quiz_containers[0].css('div.fc-item__container a ::attr(href)').extract_first()
+        if latest_quiz_url:
+            yield scrapy.Request(latest_quiz_url, callback=self.parse_quiz)
 
     def parse_quiz(self, response):
         quiz = response.css('div.content__article-body p::text').extract()
         quiz = [q.strip() for q in quiz]
-        if quiz:
-            assert(len(quiz) == 30)
-            questions = quiz[0:15]
-            answers = quiz[15:30]
+        assert(len(quiz) == 30)
 
-            print_questions(questions)
-            print_questions(questions, answers)
+        questions = quiz[0:15]
+        answers = quiz[15:30]
+
+        pages = get_question_pages(questions)
+        pages.extend(get_question_pages(questions, answers))
+        print('\n\n---\n\n'.join(pages))
 
 def main():
     process = CrawlerProcess({
