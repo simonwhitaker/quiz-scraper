@@ -71,6 +71,7 @@ class QuizScraper(scrapy.Spider):
 
 def main():
     process = CrawlerProcess({
+        'LOG_LEVEL': 'WARN',
         'USER_AGENT': 'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)'
     })
 
