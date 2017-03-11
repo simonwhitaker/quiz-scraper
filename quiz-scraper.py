@@ -40,9 +40,9 @@ class QuizScraper(scrapy.Spider):
     ]
 
     def parse(self, response):
-        # Parses the start URL, which is the index page for the quiz. It finds the
-        # first quiz link (i.e. the link to the latest quiz) and passes it to
-        # parse_quiz
+        # Parses the start URL, which is the index page for the quiz. It finds
+        # the first quiz link (i.e. the link to the latest quiz) and passes it
+        # to parse_quiz
         quiz_containers = response.css('section.fc-container')
         latest_quiz_url = quiz_containers[0].css('div.fc-item__container a ::attr(href)').extract_first()
         if latest_quiz_url:
