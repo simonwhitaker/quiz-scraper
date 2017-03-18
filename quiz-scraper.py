@@ -32,6 +32,16 @@ def get_question_pages(questions, answers=None):
             pages.append(answers[i])
     return pages
 
+def get_summary_pages(answers):
+    pages = []
+    page = ''
+    for i, a in enumerate(answers):
+        page += '- {}\n'.format(a)
+        if i % 5 == 4:
+            pages.append(page)
+            page = ''
+    return pages
+
 class QuizScraper(scrapy.Spider):
     """A scraper for fetching the Guardian weekend quiz"""
     name = 'quiz-scraper'
@@ -65,6 +75,8 @@ class QuizScraper(scrapy.Spider):
         # And add a set of pages that repeat the questions and then show the
         # answer on the next page.
         pages.extend(get_question_pages(questions, answers))
+
+        pages.extend(get_summary_pages(answers))
 
         # Now dump the quiz to STDOUT
         print('\n\n---\n\n'.join(pages))
