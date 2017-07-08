@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import re
 import scrapy
 
 from scrapy.crawler import CrawlerProcess
@@ -42,6 +43,18 @@ def get_summary_pages(answers):
             page = ''
     return pages
 
+def strip_leading_ordinals(strings_list):
+    """
+    Removes leading ordinals that may appear as a result of dodgy formatting
+    on the source website.
+    """
+    results = []
+    for (i, string) in enumerate(strings_list):
+        ordinal = i + 1
+        regex = re.compile('{}\s+'.format(ordinal))
+        results.append(re.sub(regex, '', string))
+    return results
+
 class QuizScraper(scrapy.Spider):
     """A scraper for fetching the Guardian weekend quiz"""
     name = 'quiz-scraper'
@@ -66,8 +79,8 @@ class QuizScraper(scrapy.Spider):
         # quiz_content should now contains 30 lines: the 15 questions and the 15
         # answers
         assert(len(quiz_content) == 30)
-        questions = quiz_content[0:15]
-        answers = quiz_content[15:30]
+        questions = strip_leading_ordinals(quiz_content[0:15])
+        answers = strip_leading_ordinals(quiz_content[15:30])
 
         # Get a set of pages for each question...
         pages = get_question_pages(questions)
