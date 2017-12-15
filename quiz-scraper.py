@@ -6,11 +6,13 @@ import scrapy
 from scrapy.crawler import CrawlerProcess
 
 def get_question_pages(questions, answers=None):
-    # Returns a list of pages, where each page is the Markdown text to render a
-    # single question or answer
-    #
-    # If answers is None, just render a page for each question. Otherwise,
-    # render question pages interleaved with answer pages.
+    """
+    Returns a list of pages, where each page is the Markdown text to render a
+    single question or answer
+
+    If answers is None, just render a page for each question. Otherwise,
+    render question pages interleaved with answer pages.
+    """
     pages = []
     for i, q in enumerate(questions):
         question_number = i + 1
