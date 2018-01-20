@@ -77,6 +77,9 @@ class QuizScraper(scrapy.Spider):
         # Takes the content of a single quiz page and parses it
         quiz_content = response.css('div.content__article-body p::text').extract()
         quiz_content = [q.strip().encode('utf-8') for q in quiz_content if len(q.strip()) > 0]
+        
+        # Strip out first elements (header text)
+        quiz_content = quiz_content[1:]
 
         # quiz_content should now contains 30 lines: the 15 questions and the 15
         # answers
