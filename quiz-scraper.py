@@ -83,7 +83,7 @@ class QuizScraper(scrapy.Spider):
 
         # quiz_content should now contains 30 lines: the 15 questions and the 15
         # answers
-        assert(len(quiz_content) == 30)
+        assert len(quiz_content) == 30, ('expected 30 elements, got %d' % len(quiz_content))
         questions = strip_leading_ordinals(quiz_content[0:15])
         answers = strip_leading_ordinals(quiz_content[15:30])
 
