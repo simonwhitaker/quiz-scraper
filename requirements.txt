@@ -6,8 +6,10 @@ constantly==15.1.0
 cryptography==1.7.2
 cssselect==1.0.1
 enum==0.4.6
+enum34==1.1.6
 idna==2.2
 incremental==16.10.1
+ipaddress==1.0.19
 lxml==3.7.2
 packaging==16.8
 parsel==1.1.0
