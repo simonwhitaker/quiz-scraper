@@ -1,3 +1,4 @@
 {
-    "python.pythonPath": "/Users/simon/.virtualenvs/quiz-scraper/bin/python"
+    "python.pythonPath": "/Users/simon/.virtualenvs/quiz-scraper/bin/python",
+    "python.linting.enabled": false
 }
