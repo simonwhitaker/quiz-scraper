@@ -53,7 +53,7 @@ def strip_leading_ordinals(strings_list):
     results = []
     for (i, string) in enumerate(strings_list):
         ordinal = i + 1
-        regex = re.compile('{}\s+'.format(ordinal))
+        regex = re.compile('^{}\s+'.format(ordinal))
         results.append(re.sub(regex, '', string))
     return results
 
@@ -77,7 +77,7 @@ class QuizScraper(scrapy.Spider):
         # Takes the content of a single quiz page and parses it
         quiz_content = response.css('div.content__article-body p::text').extract()
         quiz_content = [q.strip().encode('utf-8') for q in quiz_content if len(q.strip()) > 0]
-        
+
         # quiz_content should now contains 30 lines: the 15 questions and the 15
         # answers
         assert len(quiz_content) == 30, ('expected 30 elements, got %d' % len(quiz_content))
