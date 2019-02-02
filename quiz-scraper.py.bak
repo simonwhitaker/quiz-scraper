@@ -76,7 +76,7 @@ class QuizScraper(scrapy.Spider):
     def parse_quiz(self, response):
         # Takes the content of a single quiz page and parses it
         quiz_content = response.css('div.content__article-body p::text').extract()
-        quiz_content = [q.strip() for q in quiz_content if len(q.strip()) > 0]
+        quiz_content = [q.strip().encode('utf-8') for q in quiz_content if len(q.strip()) > 0]
 
         # Get rid of the ad for Eaton's new book
         if len(quiz_content) == 32 and quiz_content[30].startswith('Eaton'):
@@ -98,7 +98,7 @@ class QuizScraper(scrapy.Spider):
         pages.extend(get_summary_pages(answers))
 
         # Now dump the quiz to STDOUT
-        print(('\n\n---\n\n'.join(pages)))
+        print('\n\n---\n\n'.join(pages))
 
 def main():
     process = CrawlerProcess({
