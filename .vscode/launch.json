@@ -13,11 +13,6 @@
             "program": "${file}",
             "cwd": "${workspaceRoot}",
             "env": {},
-            "envFile": "${workspaceRoot}/.env",
-            "debugOptions": [
-                "BreakOnSystemExitZero",
-                "RedirectOutput"
-            ]
         }
     ]
 }
