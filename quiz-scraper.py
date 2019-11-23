@@ -5,6 +5,11 @@ import scrapy
 
 from scrapy.crawler import CrawlerProcess
 
+# The quiz is split into regular questions and "what links" questions. Regular
+# questions come first.
+NUM_REGULAR_QUESTIONS = 8
+TOTAL_QUESTIONS = 15
+
 def get_question_pages(questions, answers=None):
     """
     Returns a list of pages, where each page is the Markdown text to render a
@@ -16,7 +21,7 @@ def get_question_pages(questions, answers=None):
     pages = []
     for i, q in enumerate(questions):
         question_number = i + 1
-        if question_number >= 9:
+        if question_number > NUM_REGULAR_QUESTIONS:
             # Questions 9 onwards are "what links" questions
             page = '# {}: What links?\n\n'.format(question_number)
 
@@ -78,15 +83,17 @@ class QuizScraper(scrapy.Spider):
         quiz_content = response.css('div.content__article-body p::text').extract()
         quiz_content = [q.strip() for q in quiz_content if len(q.strip()) > 0]
 
-        # Get rid of the ad for Eaton's new book
-        if len(quiz_content) == 32 and quiz_content[30].startswith('Eaton'):
-            quiz_content = quiz_content[:30]
+        total_elements = TOTAL_QUESTIONS * 2
 
-        # quiz_content should now contains 30 lines: the 15 questions and the 15
-        # answers
-        assert len(quiz_content) == 30, ('expected 30 elements, got %d' % len(quiz_content))
-        questions = strip_leading_ordinals(quiz_content[0:15])
-        answers = strip_leading_ordinals(quiz_content[15:30])
+        # Get rid of the ad for Eaton's new book
+        if len(quiz_content) == total_elements + 2 and quiz_content[total_elements].startswith('Eaton'):
+            quiz_content = quiz_content[:total_elements]
+
+        # quiz_content should now contains `total_elements` lines: the
+        # `TOTAL_QUESTIONS` questions and the same number of answers
+        assert len(quiz_content) == total_elements, ('expected %d elements, got %d' % (total_elements, len(quiz_content)))
+        questions = strip_leading_ordinals(quiz_content[0:TOTAL_QUESTIONS])
+        answers = strip_leading_ordinals(quiz_content[TOTAL_QUESTIONS:TOTAL_QUESTIONS*2])
 
         # Get a set of pages for each question...
         pages = get_question_pages(questions)
